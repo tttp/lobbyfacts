@@ -34,7 +34,7 @@ Next, you need to create a local settings file by copying the template
 defaults: 
 
     cp lobbyfacts/default_settings.py settings.py 
-    export lobbyfacts_SETTINGS=settings.py
+    export LOBBYFACTS_SETTINGS=settings.py
     
 Edit the settings file to configure your database connections. To run
 the full ETL process, you will also need an account and API key on these
