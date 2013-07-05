@@ -199,10 +199,9 @@ def load_person(person, role, childBase, engine):
     person_ = childBase.copy()
     person_.update(person)
     person_['role'] = role
-    person_['name'] = '%s %s %s' % (person['title'] or '',
-                                    person['first_name'] or '',
-                                    person['last_name'] or '')
-    person_['name'] = person_['name'].strip()
+    person_['name'] = ' '.join((person['title'] or '',
+                                person['first_name'] or '',
+                                person['last_name'] or ''))
     sl.upsert(engine, table, person_, ['representative_etl_id',
                                        'role',
                                        'name'])
