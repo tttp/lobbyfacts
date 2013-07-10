@@ -6,7 +6,9 @@ log = logging.getLogger(__name__)
 
 def dedup_fields(engine, field):
     table = sl.get_table(engine, 'representative')
-    for rep in sl.all(engine, table):
+    for n, rep in enumerate(sl.all(engine, table)):
+        if n % 100 == 0:
+            print n, 'done'
         others = list(sl.find(engine, table, **{field: rep[field]}))
         if len(others) > 1:
             log.info("Duplicates for: %s", rep['name'])
