@@ -10,14 +10,7 @@ DATASET_CACHE = {}
 NAME_CACHE = {}
 
 def clean_value(value):
-    value = value.strip()
-    value = value.replace('\t', ' ')
-    value = value.replace('\n', ' ')
-    value = value.replace('\r', ' ')
-    value = value.replace('  ', ' ')
-    value = value.replace('  ', ' ')
-    value = value.replace('  ', ' ')
-    return value
+    return ' '.join(value.split())
 
 
 def get_dataset(dataset):
