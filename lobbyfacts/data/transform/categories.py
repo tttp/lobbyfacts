@@ -13,6 +13,7 @@ CATEGORIES = {
     u'VI - Organisations representing local, regional and municipal authorities, other public or mixed entities, etc.': 6
     }
 
+
 SUBCATEGORIES = {
     u'Law firms': 11,
     u'Professional consultancies': 12,
@@ -33,6 +34,7 @@ SUBCATEGORIES = {
 def code_categories(engine):
     table = sl.get_table(engine, 'representative')
     for cat in sl.distinct(engine, table, 'main_category'):
+        if not cat['main_category']: continue
         cat['main_category_id'] = CATEGORIES[cat['main_category']]
         sl.upsert(engine, table, cat, ['main_category'])
 
