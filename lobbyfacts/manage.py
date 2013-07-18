@@ -22,7 +22,7 @@ def extract():
     extract(engine)
     #from lobbyfacts.data.extract.regexpert import extract
     #extract(engine)
-    from lobbyfacts.data.extract.unreginterests import extract
+    from lobbyfacts.data.extract.unreginterest import extract
     extract(engine)
 
 @manager.command
