@@ -9,7 +9,7 @@ from lobbyfacts.model.entity import Entity
 from lobbyfacts.exc import NotFound, BadRequest
 from lobbyfacts.util import jsonify, validate_cache
 from lobbyfacts.util import response_format, stream_csv
-from lobbyfacts.views.util import get_limit, get_offset, paged_url
+from lobbyfacts.views.util import get_limit, get_offset, paged_url, arg_int
 
 
 def make_entity_api(cls):
@@ -66,7 +66,7 @@ def make_entity_api(cls):
         q = filter_query(cls.all())
         if 'update' in request.args:
             # FIXME set time correctly!
-            lastupdate=datetime.now().replace(hour=1,minute=0,second=0,microsecond=0) - timedelta(days=1)
+            lastupdate=datetime.now().replace(hour=1,minute=0,second=0,microsecond=0) - timedelta(days=arg_int(update,1))
             q=q.filter(cls.updated_at > lastupdate)
 
         format = response_format(request)
