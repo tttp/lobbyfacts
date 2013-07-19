@@ -1,4 +1,6 @@
 from itertools import groupby
+from operator import itemgetter
+from datetime import datetime, timedelta
 
 from flask import Blueprint, request, redirect, url_for
 
@@ -20,7 +22,7 @@ def make_entity_api(cls):
         filters = []
         try:
             filter_ = [f.split(':', 1) for f in request.args.getlist('filter')]
-            for key, values in groupby(filter_, lambda a: a[0]):
+            for key, values in groupby(filter_, itemgetter(0)):
                 key = key if key in mapper.c else key + '_id'
                 attr = getattr(cls, key)
                 clause = db.or_(*[attr == v[1] for v in values])
@@ -62,6 +64,10 @@ def make_entity_api(cls):
     def index(format=None):
         request.cache_key['args'] = request.args.items()
         q = filter_query(cls.all())
+        if 'update' in request.args:
+            # FIXME set time correctly!
+            lastupdate=datetime.now().replace(hour=1,minute=0,second=0,microsecond=0) - timedelta(days=1)
+            q=q.filter(cls.updated_at > lastupdate)
 
         format = response_format(request)
         if format == 'csv':
