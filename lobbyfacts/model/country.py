@@ -49,13 +49,16 @@ class Country(db.Model, ApiEntityMixIn):
         return db.session.query(cls)
 
     def as_shallow(self):
-        return {
+        d= {
             'uri': self.uri,
             'code': self.code,
             'name': self.name,
             'created_at': self.created_at,
             'updated_at': self.updated_at
             }
+        if self.id:
+            d['id']=self.id
+        return d
 
     def as_dict(self):
         d = self.as_shallow()
