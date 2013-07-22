@@ -3,8 +3,8 @@ from pprint import pprint
 import logging, csv, hashlib
 
 from lobbyfacts.data import sl, etl_engine
+from lobbyfacts.core import app
 
-UNREGS='../unregistered-companies.csv'
 log = logging.getLogger(__name__)
 
 def dateconv(ds):
@@ -38,7 +38,8 @@ def load_rep(line, engine):
 
 def extract_data(engine):
     log.info("Extracting unregistered interests data...")
-    with open(UNREGS, 'rb') as csvfile:
+
+    with app.open_resource('resources/unregistered-companies.csv') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
         for i, rep in enumerate(csvreader):
             load_rep(rep, engine)
