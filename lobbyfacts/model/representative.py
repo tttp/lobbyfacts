@@ -113,6 +113,18 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'contact_post_code': self.contact_post_code,
             'contact_fax': self.contact_fax
             })
+        if self.entity:
+            d['entity']=self.entity_id
+        if self.contact_country:
+            d['contact_country']=self.contact_country_id
+        if self.main_category:
+            d['main_category']=self.main_category_id
+        if self.sub_category:
+            d['sub_category']=self.sub_category_id
+        if self.head:
+            d['head']=self.head_id
+        if self.legal:
+            d['legal']=self.legal_id
         return d
 
     def as_dict(self):
