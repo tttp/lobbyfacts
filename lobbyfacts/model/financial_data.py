@@ -93,6 +93,8 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'other_sources_contributions': self.other_sources_contributions,
             'other_sources_total': self.other_sources_total,
             })
+        if self.id:
+            d['id']=self.id
         if turnovers:
             d['turnovers'] = [t.as_dict(financial_data=False) for t in self.turnovers]
         return d
