@@ -6,7 +6,8 @@
 
 {% block script %}
   <script>
-    $(function() {
+    jQuery(document).ready(function() {
+    //$(function() {
       window.table = LobbyFacts.makeTable($('#table'), 'fte_by_subcategory',
           [
             { field: 'name', title: 'Category', width: '60%'},
