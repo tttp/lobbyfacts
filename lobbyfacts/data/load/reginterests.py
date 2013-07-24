@@ -40,12 +40,13 @@ def load_representative(engine, rep):
     rep['contact_fax'] = " ".join((rep.get('contact_indic_fax') or '', rep.get('contact_fax') or '')).strip()
     rep['contact_country'] = Country.by_code(rep['country_code'])
 
-    main_category = upsert_category(rep.get('main_category_id'),
-                                    rep.get('main_category'))
-    rep['main_category'] = main_category
-    rep['sub_category'] = upsert_category(rep.get('sub_category_id'),
-                                          rep.get('sub_category'),
-                                          main_category)
+    if rep.get('main_category'):
+        main_category = upsert_category(rep.get('main_category_id'),
+                                        rep.get('main_category'))
+        rep['main_category'] = main_category
+        rep['sub_category'] = upsert_category(rep.get('sub_category_id'),
+                                              rep.get('sub_category'),
+                                              main_category)
 
     accreditations = []
     for person_data in sl.find(engine, sl.get_table(engine, 'person'),
