@@ -12,6 +12,12 @@ class Tag(db.Model, ApiEntityMixIn):
     def update_values(self, data):
         self.tag = data.get('tag')
 
+    @classmethod
+    def by_tag(cls, id):
+        q = db.session.query(cls)
+        q = q.filter_by(tag=tag)
+        return q.first()
+
     def as_shallow(self):
         d = {}
         d['tag'] = self.tag
