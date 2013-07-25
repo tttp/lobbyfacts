@@ -16,6 +16,7 @@ def load_rep(line, engine, unregtag):
     rep['original_name'] = line[0].strip()
     rep['name'] = line[0].strip()
     rep['identification_code'] = line[1] or hashlib.sha512(line[0].strip()).hexdigest()[:16]
+    rep['etl_id'] = "%s//ALL" % rep['identification_code']
     rep['web_site_url'] = line[2] or ''
 
     if line[3].strip():
