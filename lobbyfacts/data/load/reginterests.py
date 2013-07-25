@@ -8,7 +8,7 @@ from lobbyfacts.model import Organisation, OrganisationMembership, Person
 from lobbyfacts.model import Accreditation, FinancialData, FinancialTurnover
 from lobbyfacts.model import CountryMembership
 from lobbyfacts.data.load.util import to_integer, to_float, upsert_person
-from lobbyfacts.data.load.util import upsert_person, upsert_organisation, upsert_entity
+from lobbyfacts.data.load.util import upsert_person, upsert_organisation, upsert_entity, upsert_tag
 
 log = logging.getLogger(__name__)
 
@@ -64,6 +64,7 @@ def load_representative(engine, rep):
         representative = Representative.create(rep)
     else:
         representative.update(rep)
+
 
     for person, data_ in accreditations:
         data_['person'] = person
@@ -141,12 +142,16 @@ def load_representative(engine, rep):
         else:
             cm.update(cdata)
 
+    for tag in sl.find(engine, sl.get_table(engine, 'tags'),
+            representative_id=rep['id']):
+        tag = upsert_tag(tag)
+        if not tag in representative.tags:
+            representative.tags.append(tag)
     db.session.commit()
 
 
 def load(engine):
     for rep in sl.all(engine, sl.get_table(engine, 'representative')):
-        log.info("Loading: %s", rep.get('name'))
         if rep['etl_clean'] is False:
             log.debug("Skipping!")
             continue
