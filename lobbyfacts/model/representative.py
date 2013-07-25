@@ -126,8 +126,10 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
             d['contact_country']=self.contact_country_id
         if self.main_category:
             d['main_category']=self.main_category_id
+            d['main_category_title']=self.main_category.name
         if self.sub_category:
             d['sub_category']=self.sub_category_id
+            d['sub_category_title']=self.sub_category.name
         if self.head:
             d['head']=self.head_id
         if self.legal:
