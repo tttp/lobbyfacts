@@ -12,7 +12,7 @@ DATASET = 'openinterests-entities'
 def map_names(map_func, engine, table_name, source_column='name',
         out_column='canonical_name', **kw):
     table = sl.get_table(engine, table_name)
-    seen_values = set()
+    seen_values = set([None])
     log.info("Normalising names on '%s', column '%s'...", table_name,
              source_column)
     for row in sl.find(engine, table):
