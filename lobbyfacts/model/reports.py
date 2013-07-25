@@ -139,7 +139,7 @@ def fte_by_subcategory():
 def unregistered_representatives():
     """ Full list of unregistered representatives and their financials. """
     q = db.session.query(Representative)
-    q = q.filter(Representative.tags.any(tag='unregistered')).all()
+    q = q.filter(Representative.tags.any(tag='unregistered'))
     q = q.join(Entity)
     q = q.join(FinancialData)
     MainCategory = aliased(Category, name='MainCategory')
