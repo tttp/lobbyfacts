@@ -7,15 +7,6 @@ from lobbyfacts.core import app
 
 log = logging.getLogger(__name__)
 
-taglabel='unregistered'
-def gettag(engine,tag):
-    unregtag=sl.find_one(engine,'tag',tag=tag)
-    if not unregtag:
-        unregtag={'tag': taglabel}
-        sl.add_row(engine, sl.get_table(engine, 'tag'), unregtag)
-        unregtag=sl.find_one(engine,'tag',tag=tag)
-    return unregtag
-
 def dateconv(ds):
     return datetime.strptime(ds.split("+")[0], "%Y-%m-%dT%H:%M:%S.%f")
 
@@ -45,7 +36,7 @@ def load_rep(line, engine, unregtag):
     sl.upsert(engine, sl.get_table(engine, 'representative'), rep,
               ['etl_id'])
 
-    inserted=sl.find_one(engine,'representative',**rep)
+    inserted=sl.find_one(engine,sl.get_table(engine, 'representative'),**rep)
     if inserted:
         sl.upsert(engine, sl.get_table(engine, 'tags'),
                   {'representative_id': inserted['id'], 'tag_id': unregtag['tag']},
@@ -53,7 +44,11 @@ def load_rep(line, engine, unregtag):
 
 def extract_data(engine):
     log.info("Extracting unregistered interests data...")
-    unregtag=gettag(engine, taglabel)
+    taglabel='unregistered'
+    unregtag={'tag': taglabel}
+    sl.upsert(engine, sl.get_table(engine, 'tag'), unregtag, ['tag'])
+    unregtag=sl.find_one(engine,sl.get_table(engine, 'tag'),tag=taglabel)
+
     with app.open_resource('resources/unregistered-companies.csv') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
         for i, rep in enumerate(csvreader):
