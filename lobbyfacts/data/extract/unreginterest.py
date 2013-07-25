@@ -11,7 +11,6 @@ def dateconv(ds):
     return datetime.strptime(ds.split("+")[0], "%Y-%m-%dT%H:%M:%S.%f")
 
 def load_rep(line, engine, unregtag):
-    # name, id, url, street, city + zip
     rep={}
     rep['original_name'] = line[0].strip()
     rep['name'] = line[0].strip()
