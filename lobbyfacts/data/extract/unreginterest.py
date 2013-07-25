@@ -7,10 +7,19 @@ from lobbyfacts.core import app
 
 log = logging.getLogger(__name__)
 
+taglabel='unregistered'
+def gettag(engine,tag):
+    unregtag=sl.find_one(engine,'tag',tag=tag)
+    if not unregtag:
+        unregtag={'tag': taglabel}
+        sl.add_row(engine, sl.get_table(engine, 'tag'), unregtag)
+        unregtag=sl.find_one(engine,'tag',tag=tag)
+    return unregtag
+
 def dateconv(ds):
     return datetime.strptime(ds.split("+")[0], "%Y-%m-%dT%H:%M:%S.%f")
 
-def load_rep(line, engine):
+def load_rep(line, engine, unregtag):
     # name, id, url, street, city + zip
     rep={}
     rep['original_name'] = line[0].strip()
@@ -36,13 +45,17 @@ def load_rep(line, engine):
     sl.upsert(engine, sl.get_table(engine, 'representative'), rep,
               ['etl_id'])
 
+    sl.upsert(engine, sl.get_table(engine, 'tags'),
+              {'representative_id': rep['identification_code'], 'tag_id': unregtag['tag']},
+              ['representative_id', 'tag_id'])
+
 def extract_data(engine):
     log.info("Extracting unregistered interests data...")
-
+    unregtag=gettag(engine, taglabel)
     with app.open_resource('resources/unregistered-companies.csv') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
         for i, rep in enumerate(csvreader):
-            load_rep(rep, engine)
+            load_rep(rep, engine, unregtag)
             if i % 100 == 0:
                 log.info("Extracted: %s...", i)
 

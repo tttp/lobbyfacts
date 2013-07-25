@@ -3,6 +3,10 @@ from lobbyfacts.model.api import ApiEntityMixIn
 from lobbyfacts.model.revision import RevisionedMixIn
 from lobbyfacts.model.entity import Entity
 
+association_table = db.Table('tags', db.Model.metadata,
+    db.Column('representative_id', db.Unicode, db.ForeignKey('representative.identification_code')),
+    db.Column('tag_id', db.String(128), db.ForeignKey('tag.tag'))
+)
 
 class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'representative'
@@ -41,6 +45,9 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     sub_category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'))
     head_id = db.Column(db.Unicode(36), db.ForeignKey('person.id'))
     legal_id = db.Column(db.Unicode(36), db.ForeignKey('person.id'))
+
+    tags = db.relationship("tags",
+                           secondary=association_table)
 
     def update_values(self, data):
         self.entity = data.get('entity')
@@ -138,7 +145,8 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'legal': self.legal.as_shallow() if self.legal else None,
             'financial_data': [fd.as_shallow(turnovers=True) for fd in self.financial_datas],
             'organisation_memberships': [om.as_dict(representative=False) for om in self.organisation_memberships],
-            'accreditations': [a.as_dict(representative=False) for a in self.accreditations]
+            'accreditations': [a.as_dict(representative=False) for a in self.accreditations],
+            'tags': [t.tag for t in self.tags]
             })
         return d
 
