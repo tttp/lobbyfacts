@@ -45,9 +45,11 @@ def load_rep(line, engine, unregtag):
     sl.upsert(engine, sl.get_table(engine, 'representative'), rep,
               ['etl_id'])
 
-    sl.upsert(engine, sl.get_table(engine, 'tags'),
-              {'representative_id': rep['identification_code'], 'tag_id': unregtag['tag']},
-              ['representative_id', 'tag_id'])
+    inserted=sl.find_one(engine,'representative',**rep)
+    if inserted:
+        sl.upsert(engine, sl.get_table(engine, 'tags'),
+                  {'representative_id': inserted['id'], 'tag_id': unregtag['tag']},
+                  ['representative_id', 'tag_id'])
 
 def extract_data(engine):
     log.info("Extracting unregistered interests data...")
