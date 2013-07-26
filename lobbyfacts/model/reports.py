@@ -166,3 +166,9 @@ def accreditted_by_cat():
     q = q.join(SubCategory, Representative.sub_category)
     q = q.order_by(count.desc())
     return q
+
+def biggest_reps():
+    """ Full list of representatives and their financials. Sorted by membership size."""
+    q = representatives()
+    q = q.order_by(Representative.members.desc())
+    return q

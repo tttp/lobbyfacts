@@ -13,7 +13,7 @@ from lobbyfacts.model.reports import test_report, rep_by_exp, rep_by_country
 from lobbyfacts.model.reports import representatives, places
 from lobbyfacts.model.reports import rep_by_turnover, rep_by_fte, fte_by_subcategory
 from lobbyfacts.model.reports import unregistered_representatives, reps_by_accredited
-from lobbyfacts.model.reports import accreditted_by_cat
+from lobbyfacts.model.reports import accreditted_by_cat, biggest_reps
 
 log = logging.getLogger(__name__)
 
@@ -29,6 +29,7 @@ REPORTS = {
     'unreg_reps': unregistered_representatives,
     'by_accredited': reps_by_accredited,
     'accreditted_by_cat': accreditted_by_cat,
+    'reps_by_members': biggest_reps,
     }
 
 def update_index():
