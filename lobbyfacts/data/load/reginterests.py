@@ -144,7 +144,7 @@ def load_representative(engine, rep):
 
     for tag in sl.find(engine, sl.get_table(engine, 'tags'),
             representative_id=rep['id']):
-        tag = upsert_tag(tag)
+        tag = upsert_tag(tag['tag_id'])
         if not tag in representative.tags:
             representative.tags.append(tag)
     db.session.commit()
@@ -152,6 +152,7 @@ def load_representative(engine, rep):
 
 def load(engine):
     for rep in sl.all(engine, sl.get_table(engine, 'representative')):
+        log.info("Loading(%s): %s", i, rep.get('name'))
         if rep['etl_clean'] is False:
             log.debug("Skipping!")
             continue
