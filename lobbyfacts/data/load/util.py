@@ -1,6 +1,6 @@
 import logging
 
-from lobbyfacts.model import Entity, Person, Organisation
+from lobbyfacts.model import Entity, Person, Organisation, Tag
 
 log = logging.getLogger(__name__)
 
