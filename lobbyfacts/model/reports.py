@@ -148,16 +148,16 @@ def unregistered_representatives():
 
 def reps_by_accredited():
     """ Top representatives ranked by the number of their accredited persons. """
-    count = db.func.count(Accreditation.id)
+    count = db.func.count(Accreditation.id).label('count')
     q = db.session.query(count, Entity.name).group_by(Entity.name)
     q = q.join(Representative)
     q = q.join(Entity)
     q = q.order_by(count.desc()).limit(30)
     return q
 
-def accredited_by_cat():
+def accreditted_by_cat():
     """ Top representatives ranked by the number of their accredited persons. """
-    count = db.func.count(Accreditation.id)
+    count = db.func.count(Accreditation.id).label('count')
     MainCategory = aliased(Category, name='MainCategory')
     SubCategory = aliased(Category, name='SubCategory')
     q = db.session.query(count, MainCategory.name, SubCategory.name).group_by(MainCategory.name, SubCategory.name)
