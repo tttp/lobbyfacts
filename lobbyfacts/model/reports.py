@@ -9,6 +9,7 @@ from lobbyfacts.model.category import Category
 from lobbyfacts.model.representative import Representative
 from lobbyfacts.model.financial_data import FinancialData
 from lobbyfacts.model.person import Accreditation
+from lobbyfacts.model.tag import Tag
 
 def _greatest():
     return db.func.greatest
