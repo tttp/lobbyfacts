@@ -62,5 +62,5 @@ def upsert_organisation(data):
 def upsert_tag(data, **kw):
     tag = Tag.by_tag(data)
     if tag is None:
-        tag = Tag.create(kw)
+        tag = Tag(tag=data)
     return tag
