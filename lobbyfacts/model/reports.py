@@ -52,7 +52,7 @@ def places():
     q = q.add_column(Country.name.label("country"))
     return q
 
-def rep_by_exp(sub_category_id=None):
+def rep_by_exp(sub_category_id=None, category_id=None):
     """Representatives spending most on lobbying in a subcategory."""
     q = db.session.query(Representative.id,
             Representative.identification_code)
