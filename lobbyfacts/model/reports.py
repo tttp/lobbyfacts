@@ -144,3 +144,23 @@ def unregistered_representatives():
     q = q.add_entity(Entity)
     q = q.filter(Tag.tag == 'unregistered')
     return q
+
+def reps_by_accredited():
+    """ Full list of unregistered representatives. """
+    """
+    select count(accreditation.id) as cnt, repent.name
+    from accreditation, representative, entity as repent
+    where representative.id = accreditation.representative_id and representative.entity_id = repent.id
+    group by repent.name
+    order by cnt desc
+    limit 10;
+    """
+    q = db.session.query(Representative)
+    q = q.join(Entity)
+    q = q.group_by(Entity.name)
+    q = q.join(Accreditation)
+    q = q.add_entity(Entity)
+    count = db.func.count(Accreditation.id).label("count")
+    q = q.add_column(count)
+    q = q.order_by(count.desc())
+    return q
