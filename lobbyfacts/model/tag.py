@@ -13,7 +13,7 @@ class Tag(db.Model, ApiEntityMixIn):
         self.tag = data.get('tag')
 
     @classmethod
-    def by_tag(cls, id):
+    def by_tag(cls, tag):
         q = db.session.query(cls)
         q = q.filter_by(tag=tag)
         return q.first()
