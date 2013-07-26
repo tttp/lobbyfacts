@@ -62,10 +62,12 @@ def rep_by_exp(sub_category_id=None):
     q = q.add_column(Country.name.label("contact_country"))
     q = q.add_column(Entity.name)
     cost = _greatest()(FinancialData.cost_absolute,
-                       FinancialData.cost_max)
+                       (FinancialData.cost_max+FinancialData.cost_min)/2)
     cost = cost.label("cost")
     if sub_category_id is not None:
         q = q.filter(Representative.sub_category_id==sub_category_id)
+    elif category_id is not None:
+        q = q.filter(Representative.category_id==category_id)
     q = q.filter(cost!=None)
     q = q.add_column(cost)
     q = q.order_by(cost.desc())
@@ -91,7 +93,7 @@ def rep_by_turnover(sub_category_id=None):
     q = q.add_column(Country.name.label("contact_country"))
     q = q.add_column(Entity.name)
     turnover = _greatest()(FinancialData.turnover_absolute,
-                       FinancialData.turnover_max)
+                       (FinancialData.turnover_max+FinancialData.turnover_min)/2)
     turnover = turnover.label("turnover")
     if sub_category_id is not None:
         q = q.filter(Representative.sub_category_id==sub_category_id)
