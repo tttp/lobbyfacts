@@ -157,7 +157,7 @@ def reps_by_accredited():
     q = q.order_by(count.desc()).limit(30)
     return q
 
-def accreditted_by_cat():
+def accredited_by_cat():
     """ Top representatives ranked by the number of their accredited persons. """
     count = db.func.count(Accreditation.id).label('count')
     MainCategory = aliased(Category, name='MainCategory')

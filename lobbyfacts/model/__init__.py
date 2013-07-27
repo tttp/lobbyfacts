@@ -28,7 +28,7 @@ REPORTS = {
     'fte_by_subcategory': fte_by_subcategory,
     'unreg_reps': unregistered_representatives,
     'by_accredited': reps_by_accredited,
-    'accreditted_by_cat': accreditted_by_cat,
+    'accredited_by_cat': accredited_by_cat,
     'reps_by_members': biggest_reps,
     }
 
