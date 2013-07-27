@@ -1,7 +1,7 @@
 {% extends "reports/report.tmpl" %}
 
 {% block title %}
-  Registered representatives per country
+  Distribution of lobbyist accros countries
 {% endblock %}
 
 {% block script %}
@@ -9,13 +9,16 @@
     $(function() {
       window.table = LobbyFacts.makeTable($('#table'), 'rep_by_country',
           [
-            { field: 'name', title: 'Country of contact', width: '80%'},
-            { field: 'count', title: 'Number'},
+              {
+                  field: 'name',
+                  title: 'Country',
+                  width: '70%'
+              },
+              { field: 'count', title: 'Number of registered', width: '20%'},
 
-          ]
+          ],
         );
     });
   </script>
 {% endblock %}
-
 

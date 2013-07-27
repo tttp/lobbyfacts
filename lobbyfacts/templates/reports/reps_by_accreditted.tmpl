@@ -1,0 +1,24 @@
+{% extends "reports/report.tmpl" %}
+
+{% block title %}
+  TOP N representatives employing accreditted persons to the European Parliament
+{% endblock %}
+
+{% block script %}
+  <script>
+    $(function() {
+      window.table = LobbyFacts.makeTable($('#table'), 'by_accredited',
+          [
+              {
+                  field: 'name',
+                  title: 'Company',
+                  render: LobbyFacts.renderEntity(),
+                  width: '70%'
+              },
+              { field: 'count', title: 'Accreditted Persons', width: '20%'},
+          ],
+        );
+    });
+  </script>
+{% endblock %}
+

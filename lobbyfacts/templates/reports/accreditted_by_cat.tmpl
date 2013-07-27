@@ -1,0 +1,25 @@
+{% extends "reports/report.tmpl" %}
+
+{% block title %}
+  Number of accreditted persons to the European Parliament in all categories
+{% endblock %}
+
+{% block script %}
+  <script>
+    $(function() {
+      window.table = LobbyFacts.makeTable($('#table'), 'accredited_by_cat',
+          [
+              {
+                  field: 'name',
+                  title: 'Company',
+                  render: LobbyFacts.renderEntity(),
+                  width: '70%'
+              },
+              { field: 'count', title: 'Number of accredited persons', width: '20%'},
+
+          ],
+        );
+    });
+  </script>
+{% endblock %}
+
