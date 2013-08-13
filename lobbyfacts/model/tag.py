@@ -7,7 +7,8 @@ from lobbyfacts.model.api import ApiEntityMixIn
 class Tag(db.Model, ApiEntityMixIn):
     __tablename__ = 'tag'
 
-    tag = db.Column(db.String(128), primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
+    tag = db.Column(db.String(128), unique=True)
 
     def update_values(self, data):
         self.tag = data.get('tag')
