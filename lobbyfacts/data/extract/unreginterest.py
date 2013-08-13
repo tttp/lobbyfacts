@@ -39,7 +39,7 @@ def load_rep(line, engine, unregtag):
     inserted=sl.find_one(engine,sl.get_table(engine, 'representative'),**rep)
     if inserted:
         sl.upsert(engine, sl.get_table(engine, 'tags'),
-                  {'representative_id': inserted['id'], 'tag_id': unregtag['tag']},
+                  {'representative_id': inserted['id'], 'tag_id': unregtag['id']},
                   ['representative_id', 'tag_id'])
 
 def extract_data(engine):
