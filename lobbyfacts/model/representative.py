@@ -5,7 +5,7 @@ from lobbyfacts.model.entity import Entity
 
 association_table = db.Table('tags', db.Model.metadata,
     db.Column('representative_id', db.String(36), db.ForeignKey('representative.id')),
-    db.Column('tag_id', db.String(128), db.ForeignKey('tag.tag')),
+    db.Column('tag_id', db.BigInteger, db.ForeignKey('tag.id')),
     db.Index('representative_id_idx', 'representative_id'),
     db.Index('tag_id_idx', 'tag_id'),
     db.UniqueConstraint('representative_id', 'tag_id',
