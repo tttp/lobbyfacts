@@ -10,7 +10,7 @@ def dedup_fields(engine, field):
     for n, rep in enumerate(sl.all(engine, table)):
         if n % 100 == 0:
             print n, 'done'
-        if not rep[field] or rep[field] in seen: continue
+        if not rep[field] or not rep[field].strip() or rep[field] in seen: continue
         seen.update(rep[field])
         others = list(sl.find(engine, table, **{field: rep[field]}))
         if len(others) > 1:
