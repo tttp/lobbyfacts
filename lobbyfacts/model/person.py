@@ -22,6 +22,7 @@ class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.title = data.get('title')
         self.first_name = data.get('first_name')
         self.last_name = data.get('last_name')
+        # fixme (and also in etl/api) person can have more than one position
         self.position = data.get('position')
 
     @classmethod
