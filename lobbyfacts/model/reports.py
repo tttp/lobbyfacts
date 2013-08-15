@@ -6,7 +6,7 @@ from lobbyfacts.core import db
 from lobbyfacts.model.entity import Entity
 from lobbyfacts.model.country import Country
 from lobbyfacts.model.category import Category
-from lobbyfacts.model.representative import Representative
+from lobbyfacts.model.representative import Representative, Tags
 from lobbyfacts.model.financial_data import FinancialData
 from lobbyfacts.model.person import Accreditation
 from lobbyfacts.model.tag import Tag
@@ -173,4 +173,14 @@ def biggest_reps():
     """ Full list of representatives and their financials. Sorted by membership size."""
     q = representatives()
     q = q.order_by(Representative.members.desc())
+    return q
+
+def by_tag(tag=None):
+    """Represenatatives by tag."""
+    q = db.session.query(Representative)
+    q = q.join(Tags)
+    q = q.join(Tag)
+    q = q.join(Entity)
+    q = q.add_column(Entity.name)
+    q = q.filter(Tag.tag==tag)
     return q
