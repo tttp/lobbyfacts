@@ -2,15 +2,22 @@ from lobbyfacts.core import db
 from lobbyfacts.model.api import ApiEntityMixIn
 from lobbyfacts.model.revision import RevisionedMixIn
 from lobbyfacts.model.entity import Entity
+from lobbyfacts.model.tag import Tag
 
-association_table = db.Table('tags', db.Model.metadata,
-    db.Column('representative_id', db.String(36), db.ForeignKey('representative.id')),
-    db.Column('tag_id', db.BigInteger, db.ForeignKey('tag.id')),
-    db.Index('representative_id_idx', 'representative_id'),
-    db.Index('tag_id_idx', 'tag_id'),
-    db.UniqueConstraint('representative_id', 'tag_id',
-       name='representative_tags')
-)
+class Tags(db.Model, ApiEntityMixIn):
+    __tablename__ = 'tags'
+    representative_id = db.Column('representative_id', db.String(36), db.ForeignKey('representative.id'), primary_key=True)
+    tag_id = db.Column('tag_id', db.BigInteger, db.ForeignKey('tag.id'), primary_key=True)
+
+    def as_shallow(self):
+        return { Representative.by_id(self.representative_id).entity.name: Tag.by_id(self.tag_id) }
+
+    def as_dict(self):
+        return self.as_shallow()
+
+    @classmethod
+    def all(cls):
+        return db.session.query(cls)
 
 class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'representative'
@@ -50,7 +57,7 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     head_id = db.Column(db.Unicode(36), db.ForeignKey('person.id'))
     legal_id = db.Column(db.Unicode(36), db.ForeignKey('person.id'))
 
-    tags = db.relationship("Tag", secondary=association_table)
+    tags = db.relationship("Tag", secondary=Tags.__table__, backref='representatives')
 
     def update_values(self, data):
         self.entity = data.get('entity')
@@ -94,6 +101,11 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     def by_identification_code(cls, identification_code):
         return cls.by_attr(cls.identification_code,
                            identification_code)
+
+    @classmethod
+    def by_id(cls, id):
+        return cls.by_attr(cls.id,
+                           id)
 
     def as_shallow(self):
         d = super(Representative, self).as_dict()

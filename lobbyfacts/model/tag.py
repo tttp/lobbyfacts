@@ -19,6 +19,12 @@ class Tag(db.Model, ApiEntityMixIn):
         q = q.filter_by(tag=tag)
         return q.first()
 
+    @classmethod
+    def by_id(cls, id):
+        q = db.session.query(cls)
+        q = q.filter_by(id=id)
+        return q.first()
+
     def as_shallow(self):
         d = {}
         d['tag'] = self.tag
