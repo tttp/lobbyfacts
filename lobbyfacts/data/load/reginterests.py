@@ -103,8 +103,8 @@ def load_representative(engine, rep):
 
         for turnover_ in sl.find(engine, sl.get_table(engine, 'financial_data_turnover'),
                 representative_etl_id=rep['etl_id'], financial_data_etl_id=fd['etl_id']):
-            if turnover_.get('etl_clean') is False:
-                continue
+            #if turnover_.get('etl_clean') is False:
+            #    continue
             turnover_['entity'] = upsert_entity(turnover_.get('canonical_name'),
                                                 turnover_.get('name'))
             assert turnover_['entity'] is not None, turnover_['entity']
@@ -119,8 +119,8 @@ def load_representative(engine, rep):
 
     for org in sl.find(engine, sl.get_table(engine, 'organisation'),
             representative_etl_id=rep['etl_id']):
-        if org.get('etl_clean') is False:
-            continue
+        #if org.get('etl_clean') is False:
+        #    continue
         org['number_of_members'] = to_integer(org['number_of_members'])
         organisation = upsert_organisation(org)
         omdata = {'representative': representative, 'organisation': organisation}
@@ -132,8 +132,9 @@ def load_representative(engine, rep):
 
     for country_ in sl.find(engine, sl.get_table(engine, 'country_of_member'),
             representative_etl_id=rep['etl_id']):
-        if country_.get('etl_clean') is False:
-            continue
+        if not country_.get('country_code'): continue
+        #if country_.get('etl_clean') is False:
+        #    continue
         cdata = {'representative': representative,
                  'country': Country.by_code(country_.get('country_code'))}
         cm = CountryMembership.by_rpc(representative, cdata.get('country'))
@@ -142,20 +143,21 @@ def load_representative(engine, rep):
         else:
             cm.update(cdata)
 
-    for tag in sl.find(engine, sl.get_table(engine, 'tags'),
+    for taglink in sl.find(engine, sl.get_table(engine, 'tags'),
             representative_id=rep['id']):
-        tag = upsert_tag(tag['tag_id'])
+        etltag=sl.find_one(engine, sl.get_table(engine, 'tag'), id=taglink['tag_id'])
+        tag = upsert_tag(etltag['tag'])
         if not tag in representative.tags:
             representative.tags.append(tag)
     db.session.commit()
 
 
 def load(engine):
-    for rep in sl.all(engine, sl.get_table(engine, 'representative')):
+    for i, rep in enumerate(sl.all(engine, sl.get_table(engine, 'representative'))):
         log.info("Loading(%s): %s", i, rep.get('name'))
-        if rep['etl_clean'] is False:
-            log.debug("Skipping!")
-            continue
+        #if rep['etl_clean'] is False:
+        #    log.debug("Skipping!")
+        #    continue
         load_representative(engine, rep)
 
 if __name__ == '__main__':
