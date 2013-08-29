@@ -19,9 +19,18 @@ def test_report():
     return db.session.query(Entity.id.label('id'),
         Entity.name.label('name'))
 
-def representatives():
+def filter_by_tag(q, tag=None):
+    """filter a query by a tag."""
+    if not tag: return q
+    q = q.join(Tags)
+    q = q.join(Tag)
+    q = q.filter(Tag.tag==tag)
+    return q
+
+def representatives(tag=None):
     """ Full list of representatives and their financials. """
     q = db.session.query(Representative)
+    q = filter_by_tag(q, tag)
     q = q.join(Entity)
     q = q.join(FinancialData)
     MainCategory = aliased(Category, name='MainCategory')
@@ -34,7 +43,7 @@ def representatives():
     q = q.add_entity(SubCategory)
     return q
 
-def places():
+def places(tag=None):
     """ Abridged version of representatives and locations. """
     q = db.session.query(Representative.id,
             Representative.identification_code,
@@ -42,6 +51,7 @@ def places():
             Representative.contact_street,
             Representative.contact_lon,
             Representative.contact_lat)
+    q = filter_by_tag(q, tag)
     q = q.join(Entity)
     q = q.join(Country)
     q = q.join(FinancialData)
@@ -52,10 +62,11 @@ def places():
     q = q.add_column(Country.name.label("country"))
     return q
 
-def rep_by_exp(sub_category_id=None, category_id=None):
+def rep_by_exp(sub_category_id=None, category_id=None, tag=None):
     """Representatives spending most on lobbying in a subcategory."""
     q = db.session.query(Representative.id,
             Representative.identification_code)
+    q = filter_by_tag(q, tag)
     q = q.join(Country)
     q = q.join(FinancialData)
     q = q.join(Entity)
@@ -83,10 +94,11 @@ def rep_by_country():
     q = q.order_by(count.desc())
     return q
 
-def rep_by_turnover(sub_category_id=None):
+def rep_by_turnover(sub_category_id=None, tag=None):
     """Lobbying firms with the highest turnover in a subcategory."""
     q = db.session.query(Representative.id,
             Representative.identification_code)
+    q = filter_by_tag(q, tag)
     q = q.join(Country)
     q = q.join(FinancialData)
     q = q.join(Entity)
@@ -102,11 +114,12 @@ def rep_by_turnover(sub_category_id=None):
     q = q.order_by(turnover.desc())
     return q
 
-def rep_by_fte(sub_category_id=None):
+def rep_by_fte(sub_category_id=None, tag=None):
     """Represenatatives with the most lobbyists employed in a subcategory."""
     q = db.session.query(Representative.id,
             Representative.identification_code,
             Representative.number_of_natural_persons)
+    q = filter_by_tag(q, tag)
     q = q.join(Country)
     q = q.join(Entity)
     q = q.join(Accreditation)
@@ -139,15 +152,6 @@ def fte_by_subcategory():
     q = q.add_column(ftes)
     return q
 
-def unregistered_representatives():
-    """ Full list of unregistered representatives. """
-    q = db.session.query(Representative)
-    q = q.join(Entity)
-    q = q.join(Representative.tags)
-    q = q.add_entity(Entity)
-    q = q.filter(Tag.tag == 'unregistered')
-    return q
-
 def reps_by_accredited():
     """ Top representatives ranked by the number of their accredited persons. """
     count = db.func.count(Accreditation.id).label('count')
@@ -169,18 +173,28 @@ def accredited_by_cat():
     q = q.order_by(count.desc())
     return q
 
-def biggest_reps():
+def biggest_reps(tag=None):
     """ Full list of representatives and their financials. Sorted by membership size."""
     q = representatives()
+    q = filter_by_tag(q, tag)
     q = q.order_by(Representative.members.desc())
     return q
 
-def by_tag(tag=None):
-    """Represenatatives by tag."""
-    q = db.session.query(Representative)
-    q = q.join(Tags)
-    q = q.join(Tag)
+def reps_by_eufunding(sub_category_id=None, tag=None):
+    """Lobbying firms with the highest eu funding in a subcategory."""
+    q = db.session.query(Representative.id,
+            Representative.identification_code)
+    q = filter_by_tag(q, tag)
+    q = q.join(Country)
+    q = q.join(FinancialData)
     q = q.join(Entity)
+    q = q.add_column(Country.name.label("contact_country"))
     q = q.add_column(Entity.name)
-    q = q.filter(Tag.tag==tag)
+    funding = (FinancialData.eur_sources_grants + FinancialData.eur_sources_procurement)
+    funding = funding.label("funding")
+    if sub_category_id is not None:
+        q = q.filter(Representative.sub_category_id==sub_category_id)
+    q = q.filter(funding!=None)
+    q = q.add_column(funding)
+    q = q.order_by(funding.desc())
     return q

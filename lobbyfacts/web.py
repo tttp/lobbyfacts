@@ -69,7 +69,8 @@ def companies_by_exp(report):
         'consultancies_by_turnover', 'lawfirms_by_turnover',
         'companies_by_fte', 'ngos_by_fte', 'tradeassocs_by_fte',
         'lawfirms_by_fte', 'fte_by_category', 'rep_by_country',
-        'reps_by_accredited', 'accredited_by_cat', 'reps_by_members']:
+        'reps_by_accredited', 'accredited_by_cat', 'reps_by_members',
+        'reps_by_eufunding']:
         return render_template('reports/%s.tmpl' % report)
     raise NotFound()
 

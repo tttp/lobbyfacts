@@ -10,10 +10,10 @@ from lobbyfacts.model.financial_data import FinancialData, FinancialTurnover
 from lobbyfacts.model.tag import Tag
 
 from lobbyfacts.model.reports import test_report, rep_by_exp, rep_by_country
-from lobbyfacts.model.reports import representatives, places
+from lobbyfacts.model.reports import representatives, places, reps_by_accredited
 from lobbyfacts.model.reports import rep_by_turnover, rep_by_fte, fte_by_subcategory
-from lobbyfacts.model.reports import unregistered_representatives, reps_by_accredited
-from lobbyfacts.model.reports import accredited_by_cat, biggest_reps, by_tag
+from lobbyfacts.model.reports import accredited_by_cat, biggest_reps
+from lobbyfacts.model.reports import reps_by_eufunding
 
 log = logging.getLogger(__name__)
 
@@ -26,11 +26,10 @@ REPORTS = {
     'rep_by_turnover': rep_by_turnover,
     'rep_by_fte': rep_by_fte,
     'fte_by_subcategory': fte_by_subcategory,
-    'unreg_reps': unregistered_representatives,
     'by_accredited': reps_by_accredited,
     'accredited_by_cat': accredited_by_cat,
     'reps_by_members': biggest_reps,
-    'tag': by_tag,
+    'reps_by_eufunding': reps_by_eufunding,
     }
 
 def update_index():
