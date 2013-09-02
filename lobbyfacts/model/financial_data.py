@@ -92,6 +92,7 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'other_sources_donation': self.other_sources_donation,
             'other_sources_contributions': self.other_sources_contributions,
             'other_sources_total': self.other_sources_total,
+            'representative': self.representative.identification_code,
             })
         if self.id:
             d['id']=self.id
