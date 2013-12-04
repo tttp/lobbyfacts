@@ -3,7 +3,7 @@ from lxml import etree
 from pprint import pprint
 import logging
 
-import requests
+import requests, sys
 from lobbyfacts.data import sl, etl_engine
 
 log = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ NS = "{http://intragate.ec.europa.eu/transparencyregister/intws/20110715}"
 SI = "{http://www.w3.org/2001/XMLSchema-instance}"
 
 def dateconv(ds):
-    return datetime.strptime(ds.split("+")[0], "%Y-%m-%dT%H:%M:%S.%f")
+    return datetime.strptime(ds.split("+")[0].strip(), "%Y-%m-%dT%H:%M:%S.%f")
 
 def intconv(val):
     return val
@@ -286,6 +286,7 @@ def parse(data):
 
 def extract_data(engine, data):
     log.info("Extracting registered interests data...")
+    sl.update(engine, 'representative', {}, values={'status': 'inactive'}, ensure=False)
     for i, rep in enumerate(parse(data)):
         load_rep(rep, engine)
         if i % 100 == 0:
@@ -297,5 +298,10 @@ def extract(engine):
 
 if __name__ == '__main__':
     engine = etl_engine()
-    extract(engine)
+    if len(sys.argv)<2:
+        # extract current
+        extract(engine)
+    # extract from file
+    with open(sys.argv[1],'r') as fd:
+        extract_data(engine, fd.read().decode('utf-8'))
 
