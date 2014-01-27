@@ -10,7 +10,9 @@ class Tags(db.Model, ApiEntityMixIn):
     tag_id = db.Column('tag_id', db.BigInteger, db.ForeignKey('tag.id'), primary_key=True)
 
     def as_shallow(self):
-        return { Representative.by_id(self.representative_id).entity.name: Tag.by_id(self.tag_id) }
+        return { 'representative': Representative.by_id(self.representative_id).entity.name,
+                 'tags': Tag.by_id(self.tag_id),
+                 'representative_id': self.representative_id }
 
     def as_dict(self):
         return self.as_shallow()

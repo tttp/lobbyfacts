@@ -28,6 +28,7 @@ class Tag(db.Model, ApiEntityMixIn):
     def as_shallow(self):
         d = {}
         d['tag'] = self.tag
+        d['id'] = self.id
         return d
 
     def as_dict(self):
