@@ -44,7 +44,7 @@ def load_rep(line, engine, unregtag):
 
 def extract_data(engine):
     log.info("Extracting unregistered interests data...")
-    taglabel='unregistered'
+    taglabel='situation:unregistered'
     unregtag={'tag': taglabel}
     sl.upsert(engine, sl.get_table(engine, 'tag'), unregtag, ['tag'])
     unregtag=sl.find_one(engine,sl.get_table(engine, 'tag'),tag=taglabel)
