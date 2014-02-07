@@ -28,6 +28,7 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
     other_sources_contributions = db.Column(db.BigInteger, nullable=True)
     other_sources_total = db.Column(db.BigInteger, nullable=True)
 
+    status = db.Column(db.Unicode)
     start_date = db.Column(db.DateTime)
     end_date = db.Column(db.DateTime)
     type = db.Column(db.Unicode)
@@ -92,6 +93,7 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'other_sources_donation': self.other_sources_donation,
             'other_sources_contributions': self.other_sources_contributions,
             'other_sources_total': self.other_sources_total,
+            'status': self.status,
             'representative': self.representative.id,
             })
         if self.id:
@@ -126,6 +128,7 @@ class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
     min = db.Column(db.Integer)
     max = db.Column(db.Integer)
+    status = db.Column(db.Unicode)
 
     def update_values(self, data):
         self.financial_data = data.get('financial_data')
@@ -146,6 +149,7 @@ class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d.update({
             'uri': self.uri,
             'min': self.min,
+            'status': self.status,
             'max': self.max
             })
         if financial_data:

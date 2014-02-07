@@ -14,7 +14,7 @@ class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
     first_name = db.Column(db.Unicode)
     last_name = db.Column(db.Unicode)
     position = db.Column(db.Unicode)
-
+    status = db.Column(db.Unicode)
 
     def update_values(self, data):
         self.entity = data.get('entity')
@@ -36,11 +36,14 @@ class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d = super(Person, self).as_dict()
         d.update({
             'uri': self.uri,
+            'id': self.id,
             'name': self.entity.name if self.entity else None,
             'title': self.title,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'position': self.position
+            'position': self.position,
+            'status': self.status,
+            'entity': self.entity_id if self.entity else None,
             })
         return d
 

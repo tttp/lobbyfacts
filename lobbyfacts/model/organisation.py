@@ -13,6 +13,7 @@ class Organisation(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
     entity_id = db.Column(db.String(36), db.ForeignKey('entity.id'))
     number_of_members = db.Column(db.BigInteger, nullable=True)
+    status = db.Column(db.Unicode)
 
     def update_values(self, data):
         self.entity = data.get('entity')
@@ -28,8 +29,11 @@ class Organisation(db.Model, RevisionedMixIn, ApiEntityMixIn):
     def as_shallow(self):
         d = super(Organisation, self).as_dict()
         d.update({
+            'id': self.id,
+            'entity': self.entity_id,
             'uri': self.uri,
             'name': self.entity.name,
+            'status': self.status,
             'number_of_members': self.number_of_members
             })
         return d
@@ -56,6 +60,7 @@ class OrganisationMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
     organisation_id = db.Column(db.String(36), db.ForeignKey('organisation.id'))
     representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
+    status = db.Column(db.Unicode)
 
     def update_values(self, data):
         self.organisation = data.get('organisation')
@@ -72,6 +77,7 @@ class OrganisationMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d = super(OrganisationMembership, self).as_dict()
         d.update({
             'uri': self.uri,
+            'status': self.status,
             })
         if organisation:
             d['organisation'] = self.organisation.as_shallow()
