@@ -242,7 +242,8 @@ def load_rep(rep, engine):
     #                                   rep['lastUpdateDate'].isoformat())
     etlId = rep['etl_id'] = "%s//ALL" % rep['identification_code']
     childBase = {'representative_etl_id': etlId,
-                 'representative_update_date': rep['last_update_date']}
+                 'representative_update_date': rep['last_update_date'],
+                 'status': 'active'}
     if not rep['original_name']:
         log.error("Unnamed representative: %r", rep)
         return
@@ -286,13 +287,19 @@ def parse(data):
 
 def extract_data(engine, data):
     log.info("Extracting registered interests data...")
-    sl.update(engine, 'representative', {}, values={'status': 'inactive'}, ensure=False)
     for i, rep in enumerate(parse(data)):
         load_rep(rep, engine)
         if i % 100 == 0:
             log.info("Extracted: %s...", i)
 
 def extract(engine):
+    sl.update(engine, 'representative', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(engine, 'financial_data', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(engine, 'financial_data_turnover', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(engine, 'person', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(engine, 'organisation', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(engine, 'country_of_member', {}, {'status': 'inactive'}, ensure=False)
+
     res = requests.get(URL)
     extract_data(engine, res.content.decode('utf-8'))
 
