@@ -9,6 +9,7 @@ from lobbyfacts.model import Accreditation, FinancialData, FinancialTurnover
 from lobbyfacts.model import CountryMembership
 from lobbyfacts.data.load.util import to_integer, to_float, upsert_person
 from lobbyfacts.data.load.util import upsert_person, upsert_organisation, upsert_entity, upsert_tag
+from lobbyfacts.core import app
 
 log = logging.getLogger(__name__)
 
@@ -123,7 +124,9 @@ def load_representative(engine, rep):
         #    continue
         org['number_of_members'] = to_integer(org['number_of_members'])
         organisation = upsert_organisation(org)
-        omdata = {'representative': representative, 'organisation': organisation}
+        omdata = {'representative': representative,
+                  'status': org.get('status'),
+                  'organisation': organisation}
         om = OrganisationMembership.by_rpo(representative, organisation)
         if om is None:
             om = OrganisationMembership.create(omdata)
@@ -136,6 +139,7 @@ def load_representative(engine, rep):
         #if country_.get('etl_clean') is False:
         #    continue
         cdata = {'representative': representative,
+                 'status': country_.get('status'),
                  'country': Country.by_code(country_.get('country_code'))}
         cm = CountryMembership.by_rpc(representative, cdata.get('country'))
         if cm is None:
@@ -153,6 +157,15 @@ def load_representative(engine, rep):
 
 
 def load(engine):
+    liveengine = sl.connect(app.config.get('SQLALCHEMY_DATABASE_URI'))
+    sl.update(liveengine, 'financial_data', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(liveengine, 'financial_turnover', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(liveengine, 'person', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(liveengine, 'accreditation', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(liveengine, 'organisation', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(liveengine, 'organisation_membership', {}, {'status': 'inactive'}, ensure=False)
+    sl.update(liveengine, 'country_membership', {}, {'status': 'inactive'}, ensure=False)
+
     for i, rep in enumerate(sl.all(engine, sl.get_table(engine, 'representative'))):
         log.info("Loading(%s): %s", i, rep.get('name'))
         #if rep['etl_clean'] is False:

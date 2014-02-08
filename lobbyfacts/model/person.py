@@ -22,6 +22,7 @@ class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.title = data.get('title')
         self.first_name = data.get('first_name')
         self.last_name = data.get('last_name')
+        self.status = data.get('status')
         # fixme (and also in etl/api) person can have more than one position
         self.position = data.get('position')
 
@@ -89,6 +90,7 @@ class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
     representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
     person_id = db.Column(db.String(36), db.ForeignKey('person.id'))
+    status = db.Column(db.Unicode)
 
     start_date = db.Column(db.DateTime)
     end_date = db.Column(db.DateTime)
@@ -96,6 +98,7 @@ class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
     def update_values(self, data):
         self.representative = data.get('representative')
         self.person = data.get('person')
+        self.status = data.get('status')
 
         self.start_date = data.get('start_date')
         self.end_date = data.get('end_date')
@@ -111,6 +114,7 @@ class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d = super(Accreditation, self).as_dict()
         d.update({
             'uri': self.uri,
+            'status': self.status,
             'start_date': self.start_date,
             'end_date': self.end_date
             })

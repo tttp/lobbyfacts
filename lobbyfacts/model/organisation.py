@@ -18,6 +18,7 @@ class Organisation(db.Model, RevisionedMixIn, ApiEntityMixIn):
     def update_values(self, data):
         self.entity = data.get('entity')
         self.number_of_members = data.get('number_of_members')
+        self.status = data.get('status')
 
     @classmethod
     def by_name(cls, name):
@@ -65,6 +66,7 @@ class OrganisationMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
     def update_values(self, data):
         self.organisation = data.get('organisation')
         self.representative = data.get('representative')
+        self.status = data.get('status')
 
     @classmethod
     def by_rpo(cls, representative, organisation):

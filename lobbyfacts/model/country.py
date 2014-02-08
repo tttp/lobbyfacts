@@ -76,6 +76,7 @@ class CountryMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
     representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
     country_id = db.Column(db.BigInteger(), db.ForeignKey('country.id'))
+    status = db.Column(db.Unicode)
 
     country = db.relationship(Country,
             backref=db.backref('memberships',
@@ -91,6 +92,7 @@ class CountryMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
     def update_values(self, data):
         self.representative = data.get('representative')
         self.country = data.get('country')
+        self.status = data.get('status')
 
     @classmethod
     def by_rpc(cls, representative, country):

@@ -53,6 +53,7 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.other_sources_donation = data.get('other_sources_donation')
         self.other_sources_contributions = data.get('other_sources_donation')
         self.other_sources_total = data.get('other_sources_total')
+        self.status = data.get('status')
 
         self.start_date = data.get('start_date')
         self.end_date = data.get('end_date')
@@ -133,6 +134,7 @@ class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
     def update_values(self, data):
         self.financial_data = data.get('financial_data')
         self.entity = data.get('entity')
+        self.status = data.get('status')
 
         self.min = data.get('min')
         self.max = data.get('max')
