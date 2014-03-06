@@ -28,6 +28,7 @@ def parse_rep(rep_el):
     rep['legal_status'] = rep_el.findtext(NS + 'legalStatus')
     rep['acronym'] = rep_el.findtext(NS + 'acronym')
     rep['original_name'] = rep_el.findtext('.//' + NS + 'originalName')
+    rep['info_members'] = rep_el.findtext('.//' + NS + 'infoMembers')
     el = rep_el.find(NS + 'webSiteURL')
     rep['web_site_url'] = el.get(NS2 + 'href') if el is not None else None
     rep['main_category'] = rep_el.findtext('.//' + NS + 'mainCategory')

@@ -35,6 +35,7 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     legal_status = db.Column(db.Unicode)
     code_of_conduct = db.Column(db.Unicode)
     web_site_url = db.Column(db.Unicode)
+    info_members = db.Column(db.Unicode)
 
     members = db.Column(db.BigInteger, nullable=True)
     number_of_natural_persons = db.Column(db.BigInteger, nullable=True)
@@ -76,6 +77,7 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.legal_status = data.get('legal_status')
 
         self.members = data.get('members')
+        self.info_members = data.get('info_members')
         self.number_of_natural_persons = data.get('number_of_natural_persons')
         self.number_of_organisations = data.get('number_of_organisations')
 
@@ -123,6 +125,7 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'web_site_url': self.web_site_url,
             'legal_status': self.legal_status,
             'members': self.members,
+            'info_members': self.info_members,
             'number_of_natural_persons': self.number_of_natural_persons,
             'number_of_organisations': self.number_of_organisations,
             'registration_date': self.registration_date,
