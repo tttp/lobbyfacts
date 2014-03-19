@@ -6,9 +6,8 @@ from decimal import Decimal
 import json
 from sqlalchemy import sql
 from sqlalchemy.orm.query import Query
-from sqlalchemy.types import Text, MutableType, TypeDecorator, \
-    UserDefinedType
-
+from sqlalchemy.types import Text, TypeDecorator, UserDefinedType
+from sqlalchemy.ext.mutable import MutableDict
 
 def make_id():
     return unicode(uuid4().hex)
@@ -57,7 +56,7 @@ class JSONEncoder(json.JSONEncoder):
             return list(obj)
         raise TypeError("%r is not JSON serializable" % obj)
 
-class ReadJSONType(MutableType, TypeDecorator):
+class ReadJSONType(TypeDecorator):
     impl = Text
 
     def __init__(self):
@@ -67,7 +66,7 @@ class ReadJSONType(MutableType, TypeDecorator):
         return value
 
     def process_result_value(self, value, dialiect):
-        return json.loads(value)
+        return MutableDict(json.loads(value))
 
     def copy_value(self, value):
         return value

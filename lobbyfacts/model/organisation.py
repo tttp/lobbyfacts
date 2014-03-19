@@ -75,6 +75,14 @@ class OrganisationMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
         q = q.filter(cls.organisation_id==organisation.id)
         return q.first()
 
+    def as_shallow(self):
+        d = super(OrganisationMembership, self).as_dict()
+        d.update({
+            'organisation_id': self.organisation_id,
+            'representative_id': self.representative_id,
+            })
+        return d
+
     def as_dict(self, organisation=True, representative=True):
         d = super(OrganisationMembership, self).as_dict()
         d.update({

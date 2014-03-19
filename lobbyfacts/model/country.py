@@ -94,6 +94,14 @@ class CountryMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.country = data.get('country')
         self.status = data.get('status')
 
+    def as_shallow(self):
+        d = super(CountryMembership, self).as_dict()
+        d.update({
+            'representative_id': self.representative_id,
+            'country_id': self.country_id,
+            })
+        return d
+
     @classmethod
     def by_rpc(cls, representative, country):
         q = db.session.query(cls)

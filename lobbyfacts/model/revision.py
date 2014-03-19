@@ -2,7 +2,9 @@ from datetime import datetime
 
 from lobbyfacts.core import db
 from lobbyfacts.model.util import make_serial, make_id
-from lobbyfacts.model.util import ReadJSONType, JSONEncoder
+from lobbyfacts.model.util import JSONType, JSONEncoder
+from sqlalchemy import inspect
+from sqlalchemy.ext.mutable import MutableDict
 
 class AuditTrail(db.Model):
     __tablename__ = 'audit_trail'
@@ -15,7 +17,7 @@ class AuditTrail(db.Model):
 
     id = db.Column(db.String(36), primary_key=True, default=make_id)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    obj = db.Column(ReadJSONType)
+    obj = db.Column(MutableDict.as_mutable(JSONType))
     obj_id = db.Column(db.String(36))
     obj_type = db.Column(db.Unicode)
     action = db.Column(db.Unicode)
@@ -25,7 +27,7 @@ class AuditTrail(db.Model):
         trail = cls()
         assert action in cls.ACTIONS, action
         trail.action = action
-        trail.obj = JSONEncoder().encode(obj.as_dict())
+        trail.obj = obj.as_dict()
         trail.obj_id = obj.id
         trail.obj_type = obj.__tablename__
         trail.created_at = obj.updated_at
@@ -66,10 +68,13 @@ class RevisionedMixIn(object):
         self.update_values(data)
         if not self in db.session:
             db.session.add(self)
-        if db.session.is_modified(self, include_collections=False):
-            self.updated_at = datetime.utcnow()
-            action = AuditTrail.UPDATE if self.created_at else AuditTrail.CREATE
-            AuditTrail.create(self, action)
+        for attr in inspect(self).attrs:
+            if attr.key == 'status': continue
+            if [x for x in attr.history.added or [] if x] or [x for x in attr.history.deleted or [] if x]:
+                self.updated_at = datetime.utcnow()
+                action = AuditTrail.UPDATE if self.created_at else AuditTrail.CREATE
+                AuditTrail.create(self, action)
+                break
         db.session.flush()
         return self
 

@@ -155,8 +155,17 @@ def load_representative(engine, rep):
             representative.tags.append(tag)
     db.session.commit()
 
+def external_url_handler(error, endpoint, values):
+    return ''
 
 def load(engine):
+    # init flask
+    app.url_build_error_handlers.append(external_url_handler)
+    ctx = app.test_request_context()
+    ctx.push()
+    global request
+    request = app.preprocess_request()
+
     liveengine = sl.connect(app.config.get('SQLALCHEMY_DATABASE_URI'))
     sl.update(liveengine, 'financial_data', {}, {'status': 'inactive'}, ensure=False)
     sl.update(liveengine, 'financial_turnover', {}, {'status': 'inactive'}, ensure=False)

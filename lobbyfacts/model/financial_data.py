@@ -146,6 +146,14 @@ class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
         q = q.filter(cls.entity_id==entity.id)
         return q.first()
 
+    def as_shallow(self):
+        d = super(FinancialTurnover, self).as_dict()
+        d.update({
+            'financial_data_id': self.financial_data_id,
+            'entity_id': self.entity_id,
+            })
+        return d
+
     def as_dict(self, financial_data=True, entity=True):
         d = super(FinancialTurnover, self).as_dict()
         d.update({

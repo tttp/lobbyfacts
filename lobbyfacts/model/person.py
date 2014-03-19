@@ -110,6 +110,14 @@ class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
         q = q.filter(cls.representative_id==representative.id)
         return q.first()
 
+    def as_shallow(self):
+        d = super(Accreditation, self).as_dict()
+        d.update({
+            'representative_id': self.representative_id,
+            'person_id': self.person_id,
+            })
+        return d
+
     def as_dict(self, person=True, representative=True):
         d = super(Accreditation, self).as_dict()
         d.update({
