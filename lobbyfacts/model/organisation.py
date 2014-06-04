@@ -33,7 +33,8 @@ class Organisation(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'id': self.id,
             'entity': self.entity_id,
             'uri': self.uri,
-            'name': self.entity.name,
+            'name': self.entity.name, # drupal
+            'acronym': self.entity.acronym, # drupal
             'status': self.status,
             'number_of_members': self.number_of_members
             })
