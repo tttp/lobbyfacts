@@ -115,7 +115,6 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d = super(Representative, self).as_dict()
         d.update({
             'uri': self.uri,
-            'name': self.entity.name if self.entity else None,
             'identification_code': self.identification_code,
             'goals': self.goals,
             'status': self.status,
@@ -142,6 +141,8 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
             })
         if self.entity:
             d['entity']=self.entity_id
+            d['name']=self.entity.name
+            d['acronym']=self.entity.acronym
         if self.contact_country:
             d['contact_country']=self.contact_country_id
         if self.main_category:
