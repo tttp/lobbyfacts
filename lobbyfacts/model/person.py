@@ -114,7 +114,7 @@ class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d = super(Accreditation, self).as_dict()
         d.update({
             'representative_id': self.representative_id,
-            'person_status': self.person.status, # curve
+            'status': self.status, # curve
             'person_id': self.person_id,
             })
         return d
