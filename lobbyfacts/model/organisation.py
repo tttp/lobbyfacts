@@ -80,6 +80,7 @@ class OrganisationMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d = super(OrganisationMembership, self).as_dict()
         d.update({
             'organisation_id': self.organisation_id,
+            'organisation_status': self.organisation.status, # curve
             'representative_id': self.representative_id,
             })
         return d
