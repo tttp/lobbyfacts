@@ -23,14 +23,13 @@ class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.first_name = data.get('first_name')
         self.last_name = data.get('last_name')
         self.status = data.get('status')
-        # fixme (and also in etl/api) person can have more than one position
         self.position = data.get('position')
 
     @classmethod
-    def by_name(cls, name):
+    def by_name_pos(cls, name, pos):
         q = db.session.query(cls)
         q = q.join(Entity)
-        q = q.filter(Entity.name==name)
+        q = q.filter(Entity.name==name, Person.position==pos)
         return q.first()
 
     def as_shallow(self):

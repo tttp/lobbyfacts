@@ -42,7 +42,7 @@ def upsert_entity(canonical_name, name=None, suffix=None, **kw):
 def upsert_person(data):
     entity = upsert_entity(data.get('canonical_name'), data.get('name'))
     data['entity'] = entity
-    person = Person.by_name(entity.name)
+    person = Person.by_name_pos(entity.name, data.get('position'))
     if person is None:
         person = Person.create(data)
     else:
