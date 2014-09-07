@@ -62,7 +62,7 @@ class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 
 Entity.person = db.relationship(Person,
-        uselist=False,
+        #uselist=False,
         backref=db.backref('entity'))
 
 
@@ -137,10 +137,10 @@ class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 
 Accreditation.person = db.relationship(Person,
-        uselist=False,
+        #uselist=False,
         backref=db.backref('accreditations'))
 
 Accreditation.representative = db.relationship(Representative,
-        uselist=False,
+        #uselist=False,
         backref=db.backref('accreditations'))
 
