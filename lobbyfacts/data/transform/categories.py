@@ -15,16 +15,16 @@ CATEGORIES = {
 
 
 SUBCATEGORIES = {
-    u'Law firms': 11,
-    u'Professional consultancies': 12,
+    u'Professional consultancies': 11,
+    u'Law firms': 12,
     u'Self-employed consultants': 13,
     u'Companies & groups': 21,
-    u'Other similar organisations': 22,
+    u'Trade, business & professional associations': 22,
     u'Trade unions': 23,
-    u'Trade, business & professional associations': 24,
+    u'Other similar organisations': 24,
     u'Non-governmental organisations, platforms and networks and similar': 31,
-    u'Academic institutions': 41,
-    u'Think tanks and research institutions': 42,
+    u'Think tanks and research institutions': 41,
+    u'Academic institutions': 42,
     u'Organisations representing churches and religious communities': 51,
     u'Local, regional and municipal authorities (at sub-national level)': 61,
     u'Other public or mixed entities, etc.': 62
