@@ -3,8 +3,8 @@ from datetime import datetime
 from lobbyfacts.core import db
 from lobbyfacts.model.util import make_serial, make_id
 from lobbyfacts.model.util import JSONType, JSONEncoder
+from lobbyfacts.model.util import MutableDict
 from sqlalchemy import inspect
-from sqlalchemy.ext.mutable import MutableDict
 
 class AuditTrail(db.Model):
     __tablename__ = 'audit_trail'
