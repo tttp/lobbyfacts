@@ -5,6 +5,7 @@ import logging
 
 import requests, sys
 from lobbyfacts.data import sl, etl_engine
+import sqlalchemy
 
 log = logging.getLogger(__name__)
 
@@ -294,12 +295,15 @@ def extract_data(engine, data):
             log.info("Extracted: %s...", i)
 
 def extract(engine):
-    sl.update(engine, 'representative', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(engine, 'financial_data', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(engine, 'financial_data_turnover', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(engine, 'person', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(engine, 'organisation', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(engine, 'country_of_member', {}, {'status': 'inactive'}, ensure=False)
+    try:
+        sl.update(engine, 'representative', {}, {'status': 'inactive'}, ensure=False)
+        sl.update(engine, 'financial_data', {}, {'status': 'inactive'}, ensure=False)
+        sl.update(engine, 'financial_data_turnover', {}, {'status': 'inactive'}, ensure=False)
+        sl.update(engine, 'person', {}, {'status': 'inactive'}, ensure=False)
+        sl.update(engine, 'organisation', {}, {'status': 'inactive'}, ensure=False)
+        sl.update(engine, 'country_of_member', {}, {'status': 'inactive'}, ensure=False)
+    except sqlalchemy.exc.CompileError:
+        pass
 
     res = requests.get(URL)
     extract_data(engine, res.content.decode('utf-8'))
