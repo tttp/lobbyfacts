@@ -50,10 +50,15 @@ class Entity(db.Model, RevisionedMixIn, ApiEntityMixIn):
         text = [self.name, self.acronym]
         for obj in [self.person, self.organisation,
                 self.representative]:
-            if obj is None:
+            if not obj:
                 continue
-            for value in obj.as_shallow().values():
-                text.append(unicode(value))
+            if hasattr(obj, '__iter__'):
+               for o in obj:
+                  for value in o.as_shallow().values():
+                      text.append(unicode(value))
+            else:
+               for value in obj.as_shallow().values():
+                   text.append(unicode(value))
         text = [t for t in text if t is not None]
         return TSVector.make_text(db.engine, " ".join(text))
 
