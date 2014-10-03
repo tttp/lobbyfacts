@@ -10,6 +10,7 @@ from lobbyfacts.model import CountryMembership
 from lobbyfacts.data.load.util import to_integer, to_float, upsert_person
 from lobbyfacts.data.load.util import upsert_person, upsert_organisation, upsert_entity, upsert_tag
 from lobbyfacts.core import app
+from datetime import datetime
 
 log = logging.getLogger(__name__)
 
@@ -159,15 +160,11 @@ def external_url_handler(error, endpoint, values):
     return ''
 
 def load(engine):
-    # init flask
     liveengine = sl.connect(app.config.get('SQLALCHEMY_DATABASE_URI'))
-    sl.update(liveengine, 'financial_data', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(liveengine, 'financial_turnover', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(liveengine, 'person', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(liveengine, 'accreditation', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(liveengine, 'organisation', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(liveengine, 'organisation_membership', {}, {'status': 'inactive'}, ensure=False)
-    sl.update(liveengine, 'country_membership', {}, {'status': 'inactive'}, ensure=False)
+    for table in ['financial_data', 'financial_turnover',
+                  'person', 'accreditation', 'organisation',
+                  'organisation_membership', 'country_membership']:
+        sl.update(liveengine, table, {'status': 'active'}, {'status': 'unknown'}, ensure=False)
 
     for i, rep in enumerate(sl.all(engine, sl.get_table(engine, 'representative'))):
         log.info("Loading(%s): %s", i, rep.get('name'))
@@ -176,7 +173,14 @@ def load(engine):
         #    continue
         load_representative(engine, rep)
 
+    now = datetime.now()
+    for table in ['financial_data', 'financial_turnover',
+                  'person', 'accreditation', 'organisation',
+                  'organisation_membership', 'country_membership']:
+        sl.update(liveengine, table, {'status': 'unknown'}, {'status': 'inactive', 'updated_at': now}, ensure=False)
+
 if __name__ == '__main__':
+    # init flask
     app.url_build_error_handlers.append(external_url_handler)
     ctx = app.test_request_context()
     ctx.push()
