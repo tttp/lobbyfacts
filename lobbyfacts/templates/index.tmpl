@@ -3,6 +3,9 @@
 {% block content %}
 <h1>Welcome to the LobbyFacts Data API</h1>
 
+<h2>Introduction</h2>
+<p>The database behind <a href="http://www.lobbyfacts.eu">the LobbyFacts website</a> can be accessed via the LobbyFacts API, which is described on these pages.</p>
+
 <div class="row">
   <div class="span6">
     <h2>Data Access</h2>
@@ -12,73 +15,10 @@
     </ul>
   </div>
   <div class="span6">
-    <h2>Contributing to the API</h2>
+    <h2>Source code</h2>
     <ul>
-      <li>GitHub: <a href="https://github.com/pudo/lobbyfacts">pudo/lobbyfacts</a></li>
-      <li><a href="https://github.com/pudo/lobbyfacts/issues">Report bugs</a></li>
-    </ul>
-  </div>
-</div>
-
-<div class="row">
-  <div class="span6">
-    <h2>Data cleansing</h2>
-    
-    <ul>
-      <li><a href="/docs/entities">De-duplication of names</a></li>
-      <li><a href="http://pybossa.com/app/lobbyfacts-nee/newtask">Extracting political networks</a>
-        <ul>
-          <li>Each register entry contains a free-form field to state
-          "networking" activities. This app helps to convert the text
-          in these fields into structured information.</li>
-          <li>Low priority at the moment.</li>
-        </ul>
-      </li>
-      <li><a href="#">Industry classification of interests</a>
-        <ul>
-          <li>Crowd-sourcing tool; will be based on <a
-href="http://www.census.gov/eos/www/naics/">NAICS</a> (or <a
-href="http://ec.europa.eu/competition/mergers/cases/index/nace_all.html">NACE</a>?).</li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-  <div class="span6">
-    <h2>Reporting</h2>
-    <ul>
-      <li>Expenditure:
-        <a href="/reports/companies_by_exp">companies</a>,
-        <a href="/reports/tradeassoc_by_exp">trade associations</a>
-      </li>
-      <li>Turnover:
-        <a href="/reports/consultancies_by_turnover">consultancies</a>,
-        <a href="/reports/lawfirms_by_turnover">law firms</a>
-      </li>
-      <li>Staffing:
-        <a href="/reports/companies_by_fte">companies</a>,
-        <a href="/reports/tradeassocs_by_fte">trade associations</a>,
-        <a href="/reports/ngos_by_fte">non-profits</a>,
-        <a href="/reports/lawfirms_by_fte">law firms</a>
-      </li>
-      <li><a href="/reports/rep_by_country">Interests by country</a></li>
-      <li><a href="/reports/fte_by_category">Staff by category</a></li>
-
-      <li>Reporting Spec: <a href="https://docs.google.com/spreadsheet/ccc?key=0AvC_15ztaUqHdDZpTlhPTWZUdGttZ1BkT0ZzX3lrTHc#gid=0">Requirements</a></li>
-      <li><a href="/search">Full-text search</a></li>
-      
-      <li><a href="/api/1/reports/representatives.csv">Representatives
-data export</a> (CSV)</li>
-    </ul>
-  </div>
-</div>
-
-<div class="row">
-  <div class="span6">
-    <h2>Official sources</h2>
-    <ul>
-      <li><a href="http://europa.eu/transparency-register/index_en.htm">Transparency register</a></li>
-      <li><a href="http://ec.europa.eu/transparency/regexpert/">Register of expert groups</a></li>
-      <li><a href="http://ec.europa.eu/beneficiaries/fts/index_en.htm">EC Financial Transparency System</a></li>
+      <li>GitHub: <a href="https://github.com/stef/lobbyfacts">stef/lobbyfacts</a></li>
+      <li><a href="https://github.com/stef/lobbyfacts/issues">Report bugs</a></li>
     </ul>
   </div>
 </div>
