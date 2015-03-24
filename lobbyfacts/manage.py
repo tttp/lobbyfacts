@@ -24,7 +24,7 @@ def extract():
     #extract(engine)
     from lobbyfacts.data.extract.unreginterest import extract
     extract(engine)
-    from lobbyfacts.data.extract.tags import extract
+    from lobbyfacts.data.extract.tag import extract
     extract(engine)
 
 @manager.command
