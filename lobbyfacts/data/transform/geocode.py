@@ -26,7 +26,9 @@ def transform(engine):
             'postalcode': row.get('contact_post_code')
             }
         response = requests.get(URL, params=query)
-        json = response.json()
+        try:
+            json = response.json()
+        except: continue
         if json and len(json):
             geo = json[0]
             log.info("%s @ %s", row.get('name'), geo.get('display_name'))
