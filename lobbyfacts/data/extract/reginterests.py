@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 URL = 'http://ec.europa.eu/transparencyregister/public/consultation/statistics.do?action=getLobbyistsXml&fileType=NEW'
 NS2 = "{http://www.w3.org/1999/xlink}"
-NS = "{http://intragate.ec.europa.eu/transparencyregister/intws/20110715}"
+NS = "{http://intragate.ec.europa.eu/transparencyregister/intws/20141104}"
 SI = "{http://www.w3.org/2001/XMLSchema-instance}"
 
 def dateconv(ds):
@@ -28,35 +28,43 @@ def parse_rep(rep_el):
     rep['last_update_date'] = dateconv(rep_el.findtext(NS + 'lastUpdateDate'))
     rep['legal_status'] = rep_el.findtext(NS + 'legalStatus')
     rep['acronym'] = rep_el.findtext(NS + 'acronym')
-    rep['original_name'] = rep_el.findtext('.//' + NS + 'originalName')
-    rep['info_members'] = rep_el.findtext('.//' + NS + 'infoMembers')
+    latin_name = rep_el.findtext('.//' + NS + 'nameInLatinAlphabet')
+    if latin_name:
+        rep['original_name'] = latin_name
+        rep['native_name'] = rep_el.findtext('.//' + NS + 'originalName')
+    else:
+        rep['original_name'] = rep_el.findtext('.//' + NS + 'originalName')
+
     el = rep_el.find(NS + 'webSiteURL')
     rep['web_site_url'] = el.get(NS2 + 'href') if el is not None else None
     rep['main_category'] = rep_el.findtext('.//' + NS + 'mainCategory')
     rep['sub_category'] = rep_el.findtext('.//' + NS + 'subCategory')
 
     legal = {}
-    legal['title'] = rep_el.findtext(NS + 'legal/' + NS + 'title')
-    legal['first_name'] = rep_el.findtext(NS + 'legal/' + NS +
+    legal['title'] = rep_el.findtext(NS + 'legalResp/' + NS + 'title')
+    legal['first_name'] = rep_el.findtext(NS + 'legalResp/' + NS +
             'firstName')
-    legal['last_name'] = rep_el.findtext(NS + 'legal/' + NS +
+    legal['last_name'] = rep_el.findtext(NS + 'legalResp/' + NS +
             'lastName')
-    legal['position'] = rep_el.findtext(NS + 'legal/' + NS +
+    legal['position'] = rep_el.findtext(NS + 'legalResp/' + NS +
             'position')
     rep['legal_person'] = legal
 
     head = {}
-    head['title'] = rep_el.findtext(NS + 'head/' + NS + 'title')
-    head['first_name'] = rep_el.findtext(NS + 'head/' + NS +
+    head['title'] = rep_el.findtext(NS + 'euRelationsResp/' + NS + 'title')
+    head['first_name'] = rep_el.findtext(NS + 'euRelationsResp/' + NS +
             'firstName')
-    head['last_name'] = rep_el.findtext(NS + 'head/' + NS +
+    head['last_name'] = rep_el.findtext(NS + 'euRelationsResp/' + NS +
             'lastName')
-    head['position'] = rep_el.findtext(NS + 'head/' + NS +
+    head['position'] = rep_el.findtext(NS + 'euRelationsResp/' + NS +
             'position')
     rep['head_person'] = head
 
-    rep['contact_street'] = rep_el.findtext(NS + 'contactDetails/' + NS + 'street')
-    rep['contact_number'] = rep_el.findtext(NS + 'contactDetails/' + NS + 'number')
+    rep['contact_street'] = ' '.join((
+        rep_el.findtext(NS + 'contactDetails/' + NS + 'addressline1') or '',
+        rep_el.findtext(NS + 'contactDetails/' + NS + 'addressline2') or '',
+        rep_el.findtext(NS + 'contactDetails/' + NS + 'addressline2') or ''))
+    rep['contact_postbox'] = rep_el.findtext(NS + 'contactDetails/' + NS + 'postBox')
     rep['contact_post_code'] = rep_el.findtext(NS + 'contactDetails/' + NS
             + 'postCode')
     rep['contact_town'] = rep_el.findtext(NS + 'contactDetails/' + NS
@@ -71,13 +79,28 @@ def parse_rep(rep_el):
             + 'fax')
     rep['contact_phone'] = rep_el.findtext(NS + 'contactDetails//' + NS
             + 'phoneNumber')
-    rep['contact_more'] = rep_el.findtext(NS + 'contactDetails/' + NS
-            + 'moreContactDetails')
     rep['goals'] = rep_el.findtext(NS + 'goals')
-    rep['networking'] = rep_el.findtext(NS + 'networking')
-    rep['activities'] = rep_el.findtext(NS + 'activities')
+    act_cats = [
+        ('activityConsultCommittees', 'activity_consult_committees'),
+        ('activityEuLegislative','activity_eu_legislative'),
+        ('activityExpertGroups','activity_expert_groups'),
+        ('activityHighLevelGroups','activity_high_level_groups'),
+        ('activityIndustryForums','activity_industry_forums'),
+        ('ctivityInterGroups','activity_inter_groups'),
+        ('activityOther','activity_other'),
+        ('activityRelevantComm','activity_relevant_comm')]
+    for lm, k in act_cats:
+        rep[k] = rep_el.findtext('.//' + NS + 'activities/' + NS + lm)
+
     rep['code_of_conduct'] = rep_el.findtext(NS + 'codeOfConduct')
-    rep['members'] = intconv(rep_el.findtext(NS + 'members'))
+
+    rep['members_25'] = rep_el.findtext('.//' + NS + 'members25Percent')
+    rep['members_50'] = rep_el.findtext('.//' + NS + 'members50Percent')
+    rep['members_75'] = rep_el.findtext('.//' + NS + 'members75Percent')
+    rep['members_100'] = rep_el.findtext('.//' + NS + 'members100Percent')
+    rep['members_fte'] = rep_el.findtext('.//' + NS + 'membersFTE')
+    rep['info_members'] = rep_el.findtext('.//' + NS + 'infoMembers')
+
     rep['action_fields'] = []
     for field in rep_el.findall('.//' + NS + 'actionField/' + NS +
             'actionField'):
@@ -88,9 +111,9 @@ def parse_rep(rep_el):
         rep['interests'].append(interest.text)
     rep['number_of_natural_persons'] = intconv(rep_el.findtext('.//' + NS + 'structure/' + NS
             + 'numberOfNaturalPersons'))
-    rep['number_of_organisations'] = intconv(rep_el.findtext('.//' + NS + 'structure/' + NS
-            + 'numberOfOrganisations'))
-    #pprint((rep['numberOfNaturalPersons'], rep['numberOfOrganisations']))
+    rep['structure_members'] = rep_el.findtext('.//' + NS + 'structure/' + NS
+            + 'structureMembers')
+    rep['networking'] = rep_el.findtext('.//' + NS + 'structure/' + NS + 'networking')
     rep['country_of_members'] = []
     el = rep_el.find(NS + 'structure/' + NS + 'countries')
     if el is not None:
@@ -107,15 +130,22 @@ def parse_rep(rep_el):
 
     fd_el = rep_el.find(NS + 'financialData')
     fd = {}
-    fd['start_date'] = dateconv(fd_el.findtext(NS + 'startDate'))
+    try:
+        fd['start_date'] = dateconv(fd_el.findtext(NS + 'startDate'))
+    except AttributeError:
+        print >>sys.stderr, '[x] missing financial data, check out:', rep['identification_code']
+        rep['fd'] = fd
+        return rep
     fd['end_date'] = dateconv(fd_el.findtext(NS + 'endDate'))
     fd['eur_sources_procurement'] = intconv(fd_el.findtext(NS + 'eurSourcesProcurement'))
+    fd['eur_sources_procurement_src'] = fd_el.findtext(NS + 'eurSourcesProcurementSrc')
     fd['eur_sources_grants'] = intconv(fd_el.findtext(NS + 'eurSourcesGrants'))
+    fd['eur_sources_grants_src'] = fd_el.findtext(NS + 'eurSourcesGrantsSrc')
     fi = fd_el.find(NS + 'financialInformation')
     fd['type'] = fi.get(SI + 'type')
     #import ipdb; ipdb.set_trace()
     fd['total_budget'] = intconv(fi.findtext('.//' + NS +
-        'total_budget'))
+        'totalBudget'))
     fd['public_financing_total'] = intconv(fi.findtext('.//' + NS +
         'totalPublicFinancing'))
     fd['public_financing_national'] = intconv(fi.findtext('.//' + NS +
@@ -155,7 +185,7 @@ def parse_rep(rep_el):
     fd['cost_max'] = intconv(fi.findtext('.//' + NS +
         'cost//' + NS + 'max'))
     fd['cost_absolute'] = intconv(fi.findtext('.//' + NS +
-        'cost//' + NS + 'absoluteAmount'))
+        'cost//' + NS + 'absoluteCost'))
     fd['turnover_min'] = intconv(fi.findtext('.//' + NS +
         'turnover//' + NS + 'min'))
     fd['turnover_max'] = intconv(fi.findtext('.//' + NS +
@@ -193,6 +223,7 @@ def parse_rep(rep_el):
                     'min': intconv(min_),
                     'max': intconv(max_)
                     })
+    fd['other_financial_information'] = rep_el.findtext(NS + 'otherFinancialInformation')
     rep['fd'] = fd
     return rep
 
@@ -210,6 +241,7 @@ def load_person(person, role, childBase, engine):
 
 
 def load_finances(financialData, childBase, engine):
+    if financialData == {}: return
     etlId = '%s//%s' % (financialData['start_date'].isoformat(),
                         financialData['end_date'].isoformat())
 
@@ -284,7 +316,7 @@ def load_rep(rep, engine):
 
 def parse(data):
     doc = etree.fromstring(data.encode('utf-8'))
-    for rep_el in doc.findall('.//' + NS + 'interestRepresentativeNew'):
+    for rep_el in doc.findall('.//' + NS + 'interestRepresentative'):
         yield parse_rep(rep_el)
 
 def extract_data(engine, data):
@@ -301,6 +333,7 @@ def extract(engine):
         sl.update(engine, 'financial_data_turnover', {}, {'status': 'inactive'}, ensure=False)
         sl.update(engine, 'person', {}, {'status': 'inactive'}, ensure=False)
         sl.update(engine, 'organisation', {}, {'status': 'inactive'}, ensure=False)
+        sl.update(engine, 'accreditation', {}, {'status': 'inactive'}, ensure=False)
         sl.update(engine, 'country_of_member', {}, {'status': 'inactive'}, ensure=False)
     except sqlalchemy.exc.CompileError:
         pass
@@ -313,7 +346,8 @@ if __name__ == '__main__':
     if len(sys.argv)<2:
         # extract current
         extract(engine)
-    # extract from file
-    with open(sys.argv[1],'r') as fd:
-        extract_data(engine, fd.read().decode('utf-8'))
+    else:
+        # extract from file
+        with open(sys.argv[1],'r') as fd:
+            extract_data(engine, fd.read().decode('utf-8'))
 

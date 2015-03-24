@@ -19,6 +19,7 @@ def upsert_category(id, name, parent=None):
     category = Category.by_id(id)
     if category is None:
         category = Category.create(data)
+        db.session.commit()
     else:
         category.update(data)
     return category
@@ -31,9 +32,12 @@ def load_representative(engine, rep):
     assert entity is not None, entity
     assert entity.id is not None, entity
     rep['entity'] = entity
-    rep['members'] = to_integer(rep['members'])
+    rep['members_25'] = to_integer(rep['members_25'])
+    rep['members_50'] = to_integer(rep['members_50'])
+    rep['members_75'] = to_integer(rep['members_75'])
+    rep['members_100'] = to_integer(rep['members_100'])
+    rep['members_fte'] = to_integer(rep['members_fte'])
     rep['number_of_natural_persons'] = to_integer(rep['number_of_natural_persons'])
-    rep['number_of_organisations'] = to_integer(rep['number_of_organisations'])
 
     rep['contact_lat'] = to_float(rep['contact_lat'])
     rep['contact_lon'] = to_float(rep['contact_lon'])
@@ -96,6 +100,9 @@ def load_representative(engine, rep):
         fd['other_sources_donation'] = to_integer(fd.get('other_sources_donation'))
         fd['other_sources_contributions'] = to_integer(fd.get('other_sources_donation'))
         fd['other_sources_total'] = to_integer(fd.get('other_sources_total'))
+        fd['eur_sources_procurement_src'] = fd.get('eur_sources_procurement_src')
+        fd['eur_sources_grants_src'] = fd.get('eur_sources_grants_src')
+        fd['other_financial_information'] = fd.get('other_financial_information')
         fd['representative'] = representative
         financial_data = FinancialData.by_rsd(representative, fd.get('start_date'))
         if financial_data is None:
@@ -160,24 +167,12 @@ def external_url_handler(error, endpoint, values):
     return ''
 
 def load(engine):
-    liveengine = sl.connect(app.config.get('SQLALCHEMY_DATABASE_URI'))
-    for table in ['financial_data', 'financial_turnover',
-                  'person', 'accreditation', 'organisation',
-                  'organisation_membership', 'country_membership']:
-        sl.update(liveengine, table, {'status': 'active'}, {'status': 'unknown'}, ensure=False)
-
     for i, rep in enumerate(sl.all(engine, sl.get_table(engine, 'representative'))):
         log.info("Loading(%s): %s", i, rep.get('name'))
         #if rep['etl_clean'] is False:
         #    log.debug("Skipping!")
         #    continue
         load_representative(engine, rep)
-
-    now = datetime.now()
-    for table in ['financial_data', 'financial_turnover',
-                  'person', 'accreditation', 'organisation',
-                  'organisation_membership', 'country_membership']:
-        sl.update(liveengine, table, {'status': 'unknown'}, {'status': 'inactive', 'updated_at': now}, ensure=False)
 
 if __name__ == '__main__':
     # init flask

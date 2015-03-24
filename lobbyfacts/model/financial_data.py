@@ -27,6 +27,9 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
     other_sources_donation = db.Column(db.BigInteger, nullable=True)
     other_sources_contributions = db.Column(db.BigInteger, nullable=True)
     other_sources_total = db.Column(db.BigInteger, nullable=True)
+    eur_sources_procurement_src = db.Column(db.Unicode)
+    eur_sources_grants_src = db.Column(db.Unicode)
+    other_financial_information = db.Column(db.Unicode)
 
     status = db.Column(db.Unicode)
     start_date = db.Column(db.DateTime)
@@ -54,7 +57,9 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.other_sources_contributions = data.get('other_sources_donation')
         self.other_sources_total = data.get('other_sources_total')
         self.status = data.get('status')
-
+        self.eur_sources_procurement_src = data.get('eur_sources_procurement_src')
+        self.eur_sources_grants_src = data.get('eur_sources_grants_src')
+        self.other_financial_information = data.get('other_financial_information')
         self.start_date = data.get('start_date')
         self.end_date = data.get('end_date')
         self.type = data.get('type')
@@ -94,6 +99,9 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'other_sources_donation': self.other_sources_donation,
             'other_sources_contributions': self.other_sources_contributions,
             'other_sources_total': self.other_sources_total,
+            'eur_sources_procurement_src': self.eur_sources_procurement_src,
+            'eur_sources_grants_src': self.eur_sources_grants_src,
+            'other_financial_information': self.other_financial_information,
             'status': self.status,
             'representative': self.representative.id,
             })
@@ -173,7 +181,7 @@ class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
         return "<FinancialTurnover(%r,%r)>" % (self.financial_data, self.entity)
 
 
-FinancialData.turnovers = db.relationship('FinancialTurnover', 
+FinancialData.turnovers = db.relationship('FinancialTurnover',
             lazy='dynamic',
             backref=db.backref('financial_data',
                 uselist=False,
