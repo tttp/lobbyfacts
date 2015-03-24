@@ -69,7 +69,6 @@ class RevisionedMixIn(object):
         if not self in db.session:
             db.session.add(self)
         for attr in inspect(self).attrs:
-            if attr.key == 'status': continue
             if [x for x in attr.history.added or [] if x] or [x for x in attr.history.deleted or [] if x]:
                 self.updated_at = datetime.utcnow()
                 action = AuditTrail.UPDATE if self.created_at else AuditTrail.CREATE
