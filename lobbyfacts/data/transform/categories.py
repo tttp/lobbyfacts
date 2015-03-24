@@ -30,12 +30,14 @@ SUBCATEGORIES = {
     u'Other public or mixed entities, etc.': 62
     }
 
+newcats = {u'II - In-house lobbyists and trade/business/professional associations': u'II - In-house lobbyists and trade/professional associations'}
 
 def code_categories(engine):
     table = sl.get_table(engine, 'representative')
     for cat in sl.distinct(engine, table, 'main_category'):
         if not cat['main_category']: continue
-        cat['main_category_id'] = CATEGORIES[cat['main_category']]
+        c=newcats.get(cat['main_category'],cat['main_category'])
+        cat['main_category_id'] = CATEGORIES[c]
         sl.upsert(engine, table, cat, ['main_category'])
 
 
