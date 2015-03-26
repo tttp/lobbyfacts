@@ -86,7 +86,7 @@ def parse_rep(rep_el):
         ('activityExpertGroups','activity_expert_groups'),
         ('activityHighLevelGroups','activity_high_level_groups'),
         ('activityIndustryForums','activity_industry_forums'),
-        ('ctivityInterGroups','activity_inter_groups'),
+        ('activityInterGroups','activity_inter_groups'),
         ('activityOther','activity_other'),
         ('activityRelevantComm','activity_relevant_comm')]
     for lm, k in act_cats:
