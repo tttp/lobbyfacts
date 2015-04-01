@@ -26,6 +26,8 @@ def extract():
     extract(engine)
     from lobbyfacts.data.extract.tag import extract
     extract(engine)
+    from lobbyfacts.data.extract.meetings import extract
+    extract(engine)
 
 @manager.command
 def transform():
@@ -54,6 +56,8 @@ def load():
     load(engine)
     from lobbyfacts.model import update_index
     update_index()
+    from lobbyfacts.data.load.meetings import load
+    load(engine)
 
 if __name__ == '__main__':
     manager.run()
