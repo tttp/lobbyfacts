@@ -13,8 +13,7 @@ from lobbyfacts.data import sl, etl_engine
 import logging
 log = logging.getLogger(__name__)
 
-PROXIES = {'http': 'http://localhost:8123/'}
-HEADERS =  { 'User-agent': '' }
+HEADERS =  { 'User-agent': 'lobbyfacts/1.2' }
 
 mainurl="http://ec.europa.eu/transparencyinitiative/meetings/meeting.do?host=595cf53f-c018-4fc8-afa0-9d66c289795c&d-6679426-p="
 trurl="http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id="
@@ -30,9 +29,9 @@ def unws(obj):
 def fetch_raw(url, retries=5, ignore=[], params=None):
     try:
         if params:
-            r=requests.POST(url, params=params, proxies=PROXIES, headers=HEADERS)
+            r=requests.POST(url, params=params, headers=HEADERS)
         else:
-            r=requests.get(url, proxies=PROXIES, headers=HEADERS)
+            r=requests.get(url, headers=HEADERS)
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout), e:
         if e == requests.exceptions.Timeout:
             retries = min(retries, 1)
