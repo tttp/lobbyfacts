@@ -29,6 +29,7 @@ class Meeting(db.Model, RevisionedMixIn):
     location = db.Column(db.Unicode)
     subject = db.Column(db.Unicode)
     participants = db.relationship("Representative", secondary=MeetingParticipants.__table__, backref='meetings')
+
     unregistered = db.Column(db.Unicode)
     cancelled = db.Column(db.Boolean)
 
@@ -55,7 +56,7 @@ class Meeting(db.Model, RevisionedMixIn):
             'date': self.date,
             'location': self.location,
             'subject': self.subject,
-            'participants': [p.entity.name for p in self.participants],
+            'participants': [(p.id,p.entity.name) for p in self.participants],
             'unregistered': self.unregistered,
             'cancelled': self.cancelled})
         return d
@@ -63,7 +64,7 @@ class Meeting(db.Model, RevisionedMixIn):
     def as_dict(self):
         d = self.as_shallow()
         d.update({
-            'participants': self.participants
+            'participants': [p.as_shallow() for p in self.participants]
             })
         return d
 
