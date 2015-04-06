@@ -88,7 +88,7 @@ def make_entity_api(cls):
         q = q.offset(offset)
         return jsonify({
             'count': count,
-            'next': paged_url('.index', limit, offset+limit) if count > offset else False, 
+            'next': paged_url('.index', limit, offset+limit) if count > offset+limit else False, 
             'previous': paged_url('.index', limit, offset-limit) if offset > 0 else False,
             'limit': limit,
             'offset': offset,
